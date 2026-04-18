@@ -1,0 +1,200 @@
+.menu-page {
+  padding: 32px 0;
+  display: grid;
+  gap: 18px;
+}
+
+.menu-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  gap: 16px;
+}
+
+.menu-layout {
+  display: grid;
+  grid-template-columns: 0.95fr 1.05fr;
+  gap: 20px;
+}
+
+.pizza-list,
+.customizer-panel {
+  padding: 24px;
+}
+
+.pizza-list h2,
+.customizer-copy h2,
+.ingredients-block h3 {
+  margin: 0 0 10px;
+  color: var(--burgundy-dark);
+}
+
+.pizza-cards {
+  display: grid;
+  gap: 16px;
+}
+
+.pizza-card {
+  border: 1px solid rgba(122, 23, 51, 0.1);
+  border-radius: 20px;
+  padding: 18px;
+  display: grid;
+  gap: 14px;
+}
+
+.pizza-card.active {
+  border-color: rgba(122, 23, 51, 0.35);
+  box-shadow: 0 12px 24px rgba(122, 23, 51, 0.08);
+}
+
+.pizza-card-top {
+  display: flex;
+  gap: 14px;
+}
+
+.pizza-card-top h3 {
+  margin: 0 0 8px;
+}
+
+.pizza-card-top p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.pizza-emoji {
+  font-size: 2rem;
+}
+
+.pizza-defaults {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.pizza-defaults span {
+  padding: 7px 10px;
+  border-radius: 999px;
+  background: var(--burgundy-soft);
+  color: var(--burgundy-dark);
+  font-size: 0.92rem;
+  font-weight: 600;
+}
+
+.pizza-card-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.preview-shell {
+  display: grid;
+  place-items: center;
+  margin: 14px 0 10px;
+}
+
+.plate {
+  width: min(360px, 100%);
+  aspect-ratio: 1 / 1;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: radial-gradient(circle, #fcf5f0 0%, #efdde2 70%, #e8c8d1 100%);
+}
+
+.pizza-preview {
+  position: relative;
+  width: 72%;
+  aspect-ratio: 1 / 1;
+  border-radius: 50%;
+  background: radial-gradient(circle, #ffe7a5 0%, #f0bf73 65%, #b96f32 100%);
+  box-shadow: inset 0 0 0 12px #ef9d4d;
+  transition: transform 0.25s ease;
+}
+
+.pizza-preview.small {
+  transform: scale(0.9);
+}
+
+.pizza-preview.large {
+  transform: scale(1.08);
+}
+
+.preview-dot {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  font-size: 1.35rem;
+  font-weight: 700;
+}
+
+.preview-dot.pepperoni { color: #b32038; }
+.preview-dot.mushroom { color: #8e6f55; }
+.preview-dot.olive { color: #1f1f1f; }
+.preview-dot.basil { color: #2f9159; }
+.preview-dot.mozzarella { color: #fff8e5; }
+.preview-dot.chicken { color: #d48d48; }
+.preview-dot.jalapeno { color: #4e9a34; }
+.preview-dot.tomato { color: #d33f3f; }
+
+.variant-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+.ingredient-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.ingredient-chip {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid rgba(122, 23, 51, 0.12);
+  background: #fff;
+  border-radius: 16px;
+  padding: 12px;
+  text-align: left;
+}
+
+.ingredient-chip.selected {
+  background: var(--burgundy-soft);
+  border-color: rgba(122, 23, 51, 0.35);
+}
+
+.ingredient-chip .icon {
+  display: inline-grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+}
+
+.add-btn {
+  margin-top: 18px;
+  width: 100%;
+}
+
+@media (max-width: 980px) {
+  .menu-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 720px) {
+  .menu-header,
+  .variant-grid,
+  .ingredient-list {
+    grid-template-columns: 1fr;
+    display: grid;
+    align-items: stretch;
+  }
+
+  .menu-header {
+    justify-content: start;
+  }
+}

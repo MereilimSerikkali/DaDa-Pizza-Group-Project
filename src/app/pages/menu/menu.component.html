@@ -1,0 +1,135 @@
+<section class="container menu-page">
+  <div class="menu-header">
+    <div>
+      <h1 class="section-title">Create your pizza</h1>
+      <p class="section-subtitle">
+        Load the menu, pick a pizza, choose extra ingredients, and watch the preview update in real time.
+      </p>
+    </div>
+    <button class="btn btn-primary" type="button" (click)="loadMenu()">
+      {{ loading ? 'Loading...' : 'Load today\'s pizzas' }}
+    </button>
+  </div>
+
+  @if (errorMessage) {
+    <div class="message error">{{ errorMessage }}</div>
+  }
+
+  @if (successMessage) {
+    <div class="message success">{{ successMessage }}</div>
+  }
+
+  <div class="menu-layout">
+    <section class="pizza-list card">
+      <h2>Available pizzas</h2>
+
+      @if (pizzas.length === 0 && !loading) {
+        <div class="empty-state">Press “Load today's pizzas” to fetch menu data from the API.</div>
+      }
+
+      <div class="pizza-cards">
+        @for (pizza of pizzas; track pizza.id) {
+          <article class="pizza-card" [class.active]="selectedPizza?.id === pizza.id">
+            <div class="pizza-card-top">
+              <span class="pizza-emoji">{{ pizza.imageEmoji }}</span>
+              <div>
+                <h3>{{ pizza.name }}</h3>
+                <p>{{ pizza.description }}</p>
+              </div>
+            </div>
+
+            <div class="pizza-defaults">
+              @for (ingredientId of pizza.defaultIngredientIds; track ingredientId) {
+                <span>{{ getIngredientName(ingredientId) }}</span>
+              }
+            </div>
+
+            <div class="pizza-card-bottom">
+              <strong>${{ pizza.price.toFixed(2) }}</strong>
+              <button class="btn btn-secondary" type="button" (click)="openCustomizer(pizza)">
+                Customize
+              </button>
+            </div>
+          </article>
+        }
+      </div>
+    </section>
+
+    <section class="card customizer-panel">
+      @if (selectedPizza) {
+        <div class="customizer-copy">
+          <h2>{{ selectedPizza.name }}</h2>
+          <p>{{ selectedPizza.description }}</p>
+        </div>
+
+        <div class="preview-shell">
+          <div class="plate">
+            <div class="pizza-preview" [class.large]="size === 'large'" [class.small]="size === 'small'">
+              @for (dot of previewDots; track dot.key) {
+                <span
+                  class="preview-dot {{ dot.cssClass }}"
+                  [style.top]="dot.top"
+                  [style.left]="dot.left"
+                >
+                  {{ dot.icon }}
+                </span>
+              }
+            </div>
+          </div>
+        </div>
+
+        <div class="variant-grid">
+          <div class="form-group">
+            <label for="size">Size</label>
+            <select id="size" class="select" name="size" [(ngModel)]="size" (ngModelChange)="updatePizzaVariant()">
+              <option value="small">Small</option>
+              <option value="medium">Medium</option>
+              <option value="large">Large</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="crust">Crust</label>
+            <select
+              id="crust"
+              class="select"
+              name="crust"
+              [(ngModel)]="crust"
+              (ngModelChange)="updatePizzaVariant()"
+            >
+              <option value="classic">Classic</option>
+              <option value="thin">Thin</option>
+              <option value="cheese-burst">Cheese burst</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="ingredients-block">
+          <h3>Extra ingredients</h3>
+          <div class="ingredient-list">
+            @for (ingredient of ingredients; track ingredient.id) {
+              <button
+                class="ingredient-chip"
+                type="button"
+                [class.selected]="isSelected(ingredient.id)"
+                (click)="toggleIngredient(ingredient.id)"
+              >
+                <span class="icon {{ ingredient.cssClass }}">{{ ingredient.icon }}</span>
+                <span>{{ ingredient.name }}</span>
+                <strong>+${{ ingredient.price.toFixed(2) }}</strong>
+              </button>
+            }
+          </div>
+        </div>
+
+        <button class="btn btn-primary add-btn" type="button" (click)="addCurrentPizzaToCart()">
+          Add customized pizza to cart
+        </button>
+      } @else {
+        <div class="empty-state">
+          Load the menu first, then choose a pizza to customize.
+        </div>
+      }
+    </section>
+  </div>
+</section>

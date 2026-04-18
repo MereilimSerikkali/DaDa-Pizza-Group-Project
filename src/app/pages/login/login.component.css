@@ -1,0 +1,50 @@
+.auth-shell {
+  min-height: calc(100vh - 120px);
+  display: grid;
+  place-items: center;
+  padding: 36px 0;
+}
+
+.auth-card {
+  width: min(560px, 100%);
+  padding: 30px;
+  display: grid;
+  gap: 18px;
+}
+
+.eyebrow {
+  display: inline-block;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: var(--burgundy-soft);
+  color: var(--burgundy);
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.auth-card h1 {
+  margin: 0 0 8px;
+}
+
+.auth-card p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+.auth-form {
+  display: grid;
+  gap: 16px;
+}
+
+.demo-note {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 14px 16px;
+  border-radius: 16px;
+  background: var(--burgundy-soft);
+  color: var(--burgundy-dark);
+  font-weight: 600;
+}

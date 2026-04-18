@@ -1,0 +1,41 @@
+<header class="topbar">
+  <div class="container topbar-content">
+    <a class="brand" routerLink="/home">
+      <span class="brand-mark">🍕</span>
+      <span>
+        <strong>Burgundy Pizzeria</strong>
+        <small>Angular Demo Store</small>
+      </span>
+    </a>
+
+    <nav class="nav-links">
+      <a routerLink="/home" routerLinkActive="active">Home</a>
+      <a routerLink="/menu" routerLinkActive="active">Menu</a>
+      <a routerLink="/cart" routerLinkActive="active">Cart</a>
+      @if (!currentUser) {
+        <a routerLink="/login" routerLinkActive="active">Login</a>
+      }
+    </nav>
+
+    <div class="user-actions">
+      @if (currentUser) {
+        <div class="user-pill">
+          <span>Signed in as {{ currentUser.fullName }}</span>
+        </div>
+        <button class="btn btn-secondary" type="button" (click)="logout()">Logout</button>
+      } @else {
+        <a class="btn btn-primary" routerLink="/menu">Order now</a>
+      }
+    </div>
+  </div>
+</header>
+
+@if (logoutError) {
+  <div class="container topbar-error">
+    <div class="message error">{{ logoutError }}</div>
+  </div>
+}
+
+<main>
+  <router-outlet></router-outlet>
+</main>

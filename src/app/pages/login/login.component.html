@@ -1,0 +1,51 @@
+<section class="container auth-shell">
+  <div class="card auth-card">
+    <div>
+      <span class="eyebrow">JWT demo login</span>
+      <h1>Sign in to order pizza</h1>
+      <p>
+        The login request returns a fake JWT token. After that, the HTTP interceptor automatically appends the
+        Authorization header to cart and payment API calls.
+      </p>
+    </div>
+
+    @if (errorMessage) {
+      <div class="message error">{{ errorMessage }}</div>
+    }
+
+    <form class="auth-form" (ngSubmit)="login()">
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input
+          id="email"
+          class="input"
+          type="email"
+          name="email"
+          [(ngModel)]="email"
+          required
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input
+          id="password"
+          class="input"
+          type="password"
+          name="password"
+          [(ngModel)]="password"
+          required
+        />
+      </div>
+
+      <button class="btn btn-primary" type="submit" [disabled]="loading">
+        {{ loading ? 'Signing in...' : 'Login' }}
+      </button>
+    </form>
+
+    <div class="demo-note">
+      <strong>Demo account</strong>
+      <span>demo&#64;pizzeria.com / pizza123</span>
+    </div>
+  </div>
+</section>

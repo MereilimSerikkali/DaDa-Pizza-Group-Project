@@ -1,69 +1,46 @@
-# DaDa-Pizza-Group-Project
-A Web-Dev project focusing on the "DaDa Pizza"  services. This idea was heavily inspired by the popular pizza chain "DoDo Pizza". 
+# Burgundy Pizzeria Front End (Angular)
 
-Our main goal was to create a well-funcationing site. It contains Front-End (Angular) and Back-End (Django + DRF).
+This project is a front-end Angular demo for a pizzeria with a burgundy-and-white design system.
+It includes:
 
-Group members: Alpysbay Tomiris, Kudaibergen Aisha, and Serikkali Mereilim
-<<<<<<< HEAD
+- Routing with 4 named routes: `/home`, `/login`, `/menu`, `/cart`
+- JWT login and logout flow
+- HTTP interceptor that adds `Authorization: Bearer <token>`
+- Fake backend interceptor so the app works without a real server
+- API services and TypeScript interfaces
+- Dynamic pizza customizer with ingredient preview on top of the pizza
+- Cart page with quantity updates, removal, refresh, and fake payment
+- Template-driven forms with `[(ngModel)]`
+- Conditional rendering and looping with Angular `@if` and `@for`
+- Graceful error messages for failed API requests
 
-# MyAppName
+## Demo credentials
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.2.4.
+- Email: `demo@pizzeria.com`
+- Password: `pizza123`
 
-## Development server
-
-To start a local development server, run:
-
-```bash
-ng serve
-```
-
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
-
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+## How to run
 
 ```bash
-ng generate component component-name
+npm install
+npm start
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+Then open the local Angular development URL shown in the terminal.
 
-```bash
-ng generate --help
-```
+## Main API requests triggered by clicks
 
-## Building
+1. **Login** → `POST /auth/login`
+2. **Load today's pizzas** → `GET /pizzas` and `GET /ingredients`
+3. **Add customized pizza to cart** → `POST /cart`
+4. **Refresh cart & bank** → `GET /cart` and `GET /bank/account`
+5. **+ / - quantity** → `PUT /cart/:id`
+6. **Remove item** → `DELETE /cart/:id`
+7. **Pay now** → `POST /bank/charge`, then `DELETE /cart`
+8. **Logout** → `POST /auth/logout`
 
-To build the project run:
+## Notes
 
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
-=======
->>>>>>> 3836fc5d9f53104c4ec96260968335a74f864a57
+- The payment system is intentionally fake and safe for demo/coursework use.
+- The fake backend stores cart and bank data in `localStorage`.
+- The cart route is protected by an auth guard.
