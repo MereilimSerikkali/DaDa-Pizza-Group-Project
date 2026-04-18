@@ -1,10 +1,10 @@
 <header class="topbar">
   <div class="container topbar-content">
     <a class="brand" routerLink="/home">
-      <span class="brand-mark">🍕</span>
+      <img class="brand-logo" src="assets/photo_5409257004758405462_y.jpg" alt="DaDa Pizza logo" />
       <span>
-        <strong>Burgundy Pizzeria</strong>
-        <small>Angular Demo Store</small>
+        <strong>DaDa Pizza</strong>
+        <small>Pizza made with love</small>
       </span>
     </a>
 
@@ -20,7 +20,7 @@
     <div class="user-actions">
       @if (currentUser) {
         <div class="user-pill">
-          <span>Signed in as {{ currentUser.fullName }}</span>
+          <span>Signed as DaDa lover</span>
         </div>
         <button class="btn btn-secondary" type="button" (click)="logout()">Logout</button>
       } @else {
