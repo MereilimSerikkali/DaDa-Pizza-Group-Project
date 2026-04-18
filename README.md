@@ -4,6 +4,7 @@ A Web-Dev project focusing on the "DaDa Pizza"  services. This idea was heavily 
 Our main goal was to create a well-funcationing site. It contains Front-End (Angular) and Back-End (Django + DRF).
 
 Group members: Alpysbay Tomiris, Kudaibergen Aisha, and Serikkali Mereilim
+<<<<<<< HEAD
 
 # MyAppName
 
@@ -64,3 +65,5 @@ Angular CLI does not come with an end-to-end testing framework by default. You c
 ## Additional Resources
 
 For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+=======
+>>>>>>> 3836fc5d9f53104c4ec96260968335a74f864a57
