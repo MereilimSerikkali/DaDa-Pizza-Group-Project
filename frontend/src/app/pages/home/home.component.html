@@ -1,0 +1,59 @@
+<section class="hero container">
+  <div class="hero-copy">
+    <h1>Order artisan pizza with a live topping preview and a banking checkout.</h1>
+    <p>
+      This front end demonstrates Angular routing, API services, JWT authentication, dynamic pizza customization,
+      cart management, and a demo payment experience.
+    </p>
+    <div class="hero-actions">
+      <a class="btn btn-primary" routerLink="/menu">Open menu</a>
+      <a class="btn btn-secondary" routerLink="/login">Demo login</a>
+    </div>
+  </div>
+
+  <div class="hero-visual card">
+  <div class="cat-pizza-side-by-side">
+    
+    <div class="cat-container">
+      <img src="assets/catt.png" alt="Cat Chef" class="cat-chef">
+    </div>
+
+    <div class="pizza-container" (click)="makePizzaJump()">
+      <div class="plate">
+        <div class="pizza sliced" [class.jumping]="isJumping">
+          <span class="topping pepperoni">●</span>
+          <span class="topping basil">✦</span>
+          <span class="topping olive">◉</span>
+          <span class="topping mozzarella">✹</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="hero-note">
+    <strong>Demo credentials</strong>
+    <span>demo&#64;pizzeria.com</span>
+    <span>pizza123</span>
+  </div>
+</div>
+
+</section>
+
+<section class="container features">
+  <div class="heading">
+    <h2 class="section-title">What this front end includes</h2>
+    <p class="section-subtitle">
+      The project is structured to satisfy a course-style Angular checklist while still looking like a real product.
+    </p>
+  </div>
+
+  <div class="feature-grid">
+    @for (highlight of highlights; track highlight.title) {
+      <article class="card feature-card">
+        <h3>{{ highlight.title }}</h3>
+        <p>{{ highlight.text }}</p>
+      </article>
+    }
+  </div>
+</section>
