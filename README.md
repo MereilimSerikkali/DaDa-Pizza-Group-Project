@@ -1,4 +1,4 @@
-# DaDa Pizza
+# DaDa Pizza - Web Development 2026
 Present By: Alpysbay Tomiris, Serikkali Mereilim, Kudaibergen Aisha
 
 DaDa Pizza is a full-stack web application for an online pizza ordering system. The project was developed using Angular for the front end and Django with Django REST Framework for the back end. The application allows users to register, log in, browse pizzas, add items to a cart, place orders, and manage their session securely. It also includes an admin panel in Django for managing pizzas, categories, ingredients, and customer orders.
