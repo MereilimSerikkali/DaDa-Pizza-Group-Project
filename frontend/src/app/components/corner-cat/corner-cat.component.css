@@ -1,0 +1,20 @@
+.corner-cat-container {
+  position: fixed;
+  bottom: -20px;
+  right: -250px;
+  z-index: 9999;
+  transition: right 0.8s ease-in-out;
+  
+
+  pointer-events: none; 
+}
+
+.corner-cat-container.show {
+  right: -40px; 
+}
+
+.spy-cat {
+  width: 280px; 
+  height: auto;
+  transform: rotate(-10deg);
+}

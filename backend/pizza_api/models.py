@@ -1,23 +1,27 @@
-from django.db import models
-from django.contrib.auth.models import User
+from decimal import Decimal
 
-# 1. Категории с иконками
+from django.contrib.auth.models import User
+from django.db import models
+
+
 class Category(models.Model):
     name = models.CharField(max_length=100, verbose_name="Название категории")
-    slug = models.SlugField(unique=True, null=True) # Для красивых URL
+    slug = models.SlugField(unique=True, null=True)
 
-    def __str__(self):
+    def str(self):
         return self.name
 
-# 2. Ингредиенты (для кастомизации)
+
 class Ingredient(models.Model):
     name = models.CharField(max_length=100)
-    extra_price = models.DecimalField(max_digits=5, decimal_places=2, default=0.00)
+    extra_price = models.DecimalField(max_digits=5, decimal_places=2, default=Decimal('0.00'))
+    icon = models.CharField(max_length=10, default='●')
+    css_class = models.CharField(max_length=50, default='ingredient')
 
-    def __str__(self):
+    def str(self):
         return self.name
 
-# 3. Сама Пицца
+
 class Pizza(models.Model):
     name = models.CharField(max_length=255)
     description = models.TextField()
@@ -25,20 +29,18 @@ class Pizza(models.Model):
     price = models.DecimalField(max_digits=10, decimal_places=2)
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='pizzas')
     ingredients = models.ManyToManyField(Ingredient, blank=True)
-    is_active = models.BooleanField(default=True) # Чтобы можно было "скрывать" позиции
+    is_active = models.BooleanField(default=True)
 
-    # Тот самый Custom Model Manager (Пункт 2 требований)
-    # Позволяет делать Pizza.objects.available()
     class PizzaManager(models.Manager):
         def available(self):
             return self.filter(is_active=True)
 
-    objects = PizzaManager() 
+    objects = PizzaManager()
 
-    def __str__(self):
+    def str(self):
         return self.name
 
-# 4. Заказ (Сложная структура)
+
 class Order(models.Model):
     STATUS_CHOICES = [
         ('PR', 'Preparing'),
@@ -47,11 +49,47 @@ class Order(models.Model):
     ]
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='orders')
     status = models.CharField(max_length=2, choices=STATUS_CHOICES, default='PR')
-    total_price = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    total_price = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal('0.00'))
     created_at = models.DateTimeField(auto_now_add=True)
 
-# 5. Промежуточная таблица 
+
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='items')
     pizza = models.ForeignKey(Pizza, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField(default=1)
+
+
+class CartItem(models.Model):
+    SIZE_CHOICES = [
+        ('small', 'Small'),
+        ('medium', 'Medium'),
+        ('large', 'Large'),
+    ]
+    CRUST_CHOICES = [
+        ('classic', 'Classic'),
+        ('thin', 'Thin'),
+        ('cheese-burst', 'Cheese burst'),
+    ]
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='cart_items')
+    pizza = models.ForeignKey(Pizza, on_delete=models.CASCADE, related_name='cart_items')
+    ingredients = models.ManyToManyField(Ingredient, blank=True)
+    size = models.CharField(max_length=20, choices=SIZE_CHOICES, default='medium')
+    crust = models.CharField(max_length=20, choices=CRUST_CHOICES, default='classic')
+    quantity = models.PositiveIntegerField(default=1)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    @property
+    def unit_price(self):
+        ingredient_total = sum((ingredient.extra_price for ingredient in self.ingredients.all()), Decimal('0.00'))
+        size_extra = {
+            'small': Decimal('-1.00'),
+            'medium': Decimal('0.00'),
+            'large': Decimal('2.00'),
+        }[self.size]
+        crust_extra = {
+            'classic': Decimal('0.00'),
+            'thin': Decimal('1.00'),
+            'cheese-burst': Decimal('3.00'),
+        }[self.crust]
+        return self.pizza.price + ingredient_total + size_extra + crust_extra
