@@ -10,7 +10,6 @@ import { LoginComponent } from './pages/login/login.component';
 import { MenuComponent } from './pages/menu/menu.component';
 import { CartComponent } from './pages/cart/cart.component';
 import { AuthInterceptor } from './core/interceptors/auth.interceptor';
-import { FakeBackendInterceptor } from './core/interceptors/fake-backend.interceptor';
 import { CornerCatComponent } from './components/corner-cat/corner-cat.component';
 
 @NgModule({
@@ -20,11 +19,6 @@ import { CornerCatComponent } from './components/corner-cat/corner-cat.component
     {
       provide: HTTP_INTERCEPTORS,
       useClass: AuthInterceptor,
-      multi: true
-    },
-    {
-      provide: HTTP_INTERCEPTORS,
-      useClass: FakeBackendInterceptor,
       multi: true
     }
   ],

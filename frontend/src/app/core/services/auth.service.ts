@@ -8,7 +8,7 @@ import { ApiService } from './api.service';
   providedIn: 'root'
 })
 export class AuthService {
-  private readonly tokenKey = 'pizza_jwt';
+  private readonly tokenKey = 'dada_token';
   private readonly userKey = 'pizza_user';
   private readonly userSubject = new BehaviorSubject<User | null>(this.readStoredUser());
 
@@ -17,7 +17,7 @@ export class AuthService {
   constructor(private readonly api: ApiService) {}
 
   login(email: string, password: string): Observable<AuthResponse> {
-    return this.api.post<AuthResponse>('/auth/login', { email, password }).pipe(
+    return this.api.post<AuthResponse>('/auth/login/', { email, password }).pipe(
       tap((response) => {
         localStorage.setItem(this.tokenKey, response.token);
         localStorage.setItem(this.userKey, JSON.stringify(response.user));
@@ -27,7 +27,7 @@ export class AuthService {
   }
 
   logout(): Observable<{ message: string }> {
-    return this.api.post<{ message: string }>('/auth/logout', {}).pipe(
+    return this.api.post<{ message: string }>('/auth/logout/', {}).pipe(
       tap(() => this.clearSession())
     );
   }

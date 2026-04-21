@@ -11,10 +11,10 @@ export class PizzaService {
   constructor(private readonly api: ApiService) {}
 
   getPizzas(): Observable<Pizza[]> {
-    return this.api.get<Pizza[]>('/pizzas');
+    return this.api.get<Pizza[]>('/pizzas/');
   }
 
   getIngredients(): Observable<Ingredient[]> {
-    return this.api.get<Ingredient[]>('/ingredients');
+    return this.api.get<Ingredient[]>('/ingredients/');
   }
 }

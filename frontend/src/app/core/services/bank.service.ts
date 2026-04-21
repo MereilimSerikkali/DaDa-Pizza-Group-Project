@@ -17,10 +17,10 @@ export class BankService {
   constructor(private readonly api: ApiService) {}
 
   getAccount(): Observable<BankAccount> {
-    return this.api.get<BankAccount>('/bank/account');
+    return this.api.get<BankAccount>('/bank/account/');
   }
 
   charge(payload: CheckoutRequest): Observable<ChargeResponse> {
-    return this.api.post<ChargeResponse>('/bank/charge', payload);
+    return this.api.post<ChargeResponse>('/bank/charge/', payload);
   }
 }
