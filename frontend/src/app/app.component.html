@@ -20,7 +20,7 @@
     <div class="user-actions">
       @if (currentUser) {
         <div class="user-pill">
-          <span>Signed in as {{ currentUser.fullName }}</span>
+          <span>Signed as DaDa lover</span>
         </div>
         <button class="btn btn-secondary" type="button" (click)="logout()">Logout</button>
       } @else {
@@ -40,4 +40,5 @@
   <router-outlet></router-outlet>
 </main>
 
-<app-corner-cat></app-corner-cat>
+
+<router-outlet></router-outlet> <app-corner-cat></app-corner-cat>

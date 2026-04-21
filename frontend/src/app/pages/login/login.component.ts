@@ -9,17 +9,16 @@ import { AuthService } from '../../core/services/auth.service';
 })
 export class LoginComponent {
   mode: 'login' | 'register' = 'login';
-
+  fullName = '';
   email = 'demo@pizzeria.com';
   password = 'pizza123';
-  fullName = '';
   loading = false;
   errorMessage = '';
 
   readonly demoAccounts = [
-    { email: 'demo@pizzeria.com', password: 'pizza123', label: 'Demo customer' },
-    { email: 'customer@pizzeria.com', password: 'customer123', label: 'Second customer' },
-    { email: 'admin@pizzeria.com', password: 'admin123', label: 'Admin account' }
+    { label: 'Demo customer', email: 'demo@pizzeria.com', password: 'pizza123' },
+    { label: 'Second customer', email: 'customer@pizzeria.com', password: 'customer123' },
+    { label: 'Admin', email: 'admin@pizzeria.com', password: 'admin123' }
   ];
 
   constructor(
@@ -32,7 +31,7 @@ export class LoginComponent {
     this.errorMessage = '';
   }
 
-  useDemoAccount(email: string, password: string): void {
+  fillDemo(email: string, password: string): void {
     this.mode = 'login';
     this.email = email;
     this.password = password;
@@ -43,9 +42,9 @@ export class LoginComponent {
     this.loading = true;
     this.errorMessage = '';
 
-    const request$ = this.mode === 'login'
-      ? this.authService.login(this.email, this.password)
-      : this.authService.register(this.fullName, this.email, this.password);
+    const request$ = this.mode === 'register'
+      ? this.authService.register(this.fullName, this.email, this.password)
+      : this.authService.login(this.email, this.password);
 
     request$.subscribe({
       next: () => {

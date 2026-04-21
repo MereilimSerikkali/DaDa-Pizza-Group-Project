@@ -1,12 +1,11 @@
 <section class="container auth-shell">
   <div class="card auth-card">
     <div>
-      <span class="eyebrow">Real Django authentication</span>
-      <h1>{{ mode === 'login' ? 'Sign in to DaDa Pizza' : 'Create your DaDa Pizza account' }}</h1>
+      <span class="eyebrow">Django authentication</span>
+      <h1>{{ mode === 'login' ? 'Sign in to order pizza' : 'Create a new account' }}</h1>
       <p>
-        {{ mode === 'login'
-          ? 'Login uses the backend token endpoint and stores the authenticated user in local storage.'
-          : 'Registration creates a new backend user and logs them in immediately.' }}
+        Use one of the pre-configured accounts below, or create a new account that will be saved in Django.
+        The admin account can also sign in at <strong>/admin</strong>.
       </p>
     </div>
 
@@ -27,57 +26,32 @@
       @if (mode === 'register') {
         <div class="form-group">
           <label for="fullName">Full name</label>
-          <input
-            id="fullName"
-            class="input"
-            type="text"
-            name="fullName"
-            [(ngModel)]="fullName"
-            required
-          />
+          <input id="fullName" class="input" type="text" name="fullName" [(ngModel)]="fullName" required />
         </div>
       }
 
       <div class="form-group">
         <label for="email">Email</label>
-        <input
-          id="email"
-          class="input"
-          type="email"
-          name="email"
-          [(ngModel)]="email"
-          required
-        />
+        <input id="email" class="input" type="email" name="email" [(ngModel)]="email" required />
       </div>
 
       <div class="form-group">
         <label for="password">Password</label>
-        <input
-          id="password"
-          class="input"
-          type="password"
-          name="password"
-          [(ngModel)]="password"
-          required
-          minlength="6"
-        />
+        <input id="password" class="input" type="password" name="password" [(ngModel)]="password" required />
       </div>
 
       <button class="btn btn-primary" type="submit" [disabled]="loading">
-        {{ loading ? 'Please wait...' : (mode === 'login' ? 'Login' : 'Register') }}
+        {{ loading ? (mode === 'login' ? 'Signing in...' : 'Creating account...') : (mode === 'login' ? 'Login' : 'Register') }}
       </button>
     </form>
 
     <div class="demo-note">
       <strong>Pre-configured accounts</strong>
-      <div class="demo-accounts">
-        @for (account of demoAccounts; track account.email) {
-          <button class="demo-account-btn" type="button" (click)="useDemoAccount(account.email, account.password)">
-            <span>{{ account.label }}</span>
-            <small>{{ account.email }} / {{ account.password }}</small>
-          </button>
-        }
-      </div>
+      @for (account of demoAccounts; track account.email) {
+        <button type="button" class="demo-account" (click)="fillDemo(account.email, account.password)">
+          {{ account.label }} — {{ account.email }} / {{ account.password }}
+        </button>
+      }
     </div>
   </div>
 </section>

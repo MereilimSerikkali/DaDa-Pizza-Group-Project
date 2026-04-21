@@ -16,8 +16,8 @@ from .views import (
 )
 
 urlpatterns = [
-    path('auth/register/', register_view),
     path('auth/login/', login_view),
+    path('auth/register/', register_view),
     path('auth/logout/', logout_view),
     path('pizzas/', pizza_list),
     path('pizzas/<int:pk>/', pizza_detail),

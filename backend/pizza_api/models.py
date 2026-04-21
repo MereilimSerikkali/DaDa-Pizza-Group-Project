@@ -8,7 +8,7 @@ class Category(models.Model):
     name = models.CharField(max_length=100, verbose_name="Название категории")
     slug = models.SlugField(unique=True, null=True)
 
-    def str(self):
+    def __str__(self):
         return self.name
 
 
@@ -18,7 +18,7 @@ class Ingredient(models.Model):
     icon = models.CharField(max_length=10, default='●')
     css_class = models.CharField(max_length=50, default='ingredient')
 
-    def str(self):
+    def __str__(self):
         return self.name
 
 
@@ -37,7 +37,7 @@ class Pizza(models.Model):
 
     objects = PizzaManager()
 
-    def str(self):
+    def __str__(self):
         return self.name
 
 
@@ -52,11 +52,17 @@ class Order(models.Model):
     total_price = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal('0.00'))
     created_at = models.DateTimeField(auto_now_add=True)
 
+    def __str__(self):
+        return f"Order #{self.pk} - {self.user.username}"
+
 
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='items')
     pizza = models.ForeignKey(Pizza, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField(default=1)
+
+    def __str__(self):
+        return f"{self.quantity} x {self.pizza.name}"
 
 
 class CartItem(models.Model):
@@ -93,3 +99,6 @@ class CartItem(models.Model):
             'cheese-burst': Decimal('3.00'),
         }[self.crust]
         return self.pizza.price + ingredient_total + size_extra + crust_extra
+
+    def __str__(self):
+        return f"{self.user.username} - {self.pizza.name}"
