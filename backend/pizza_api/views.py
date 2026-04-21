@@ -1,6 +1,7 @@
 from decimal import Decimal
 
-from django.contrib.auth import authenticate, get_user_model
+from django.contrib.auth import authenticate
+from django.contrib.auth.models import User
 from django.db import transaction
 from rest_framework import permissions, status
 from rest_framework.authentication import TokenAuthentication
@@ -18,10 +19,12 @@ from .serializers import (
     PizzaSerializer,
 )
 
-User = get_user_model()
 
 def ensure_demo_data():
-    category, _ = Category.objects.get_or_create(name='Signature', defaults={'slug': 'signature'})
+    category, _ = Category.objects.get_or_create(name='Signature pizzas', defaults={'slug': 'signature-pizzas'})
+    if not category.slug:
+        category.slug = 'signature-pizzas'
+        category.save(update_fields=['slug'])
 
     ingredient_defaults = [
         ('Pepperoni', Decimal('1.50'), '●', 'pepperoni'),
@@ -33,13 +36,13 @@ def ensure_demo_data():
         ('Jalapeños', Decimal('1.00'), '✦', 'jalapeno'),
         ('Cherry Tomatoes', Decimal('1.00'), '●', 'tomato'),
     ]
+
     ingredients = {}
     for name, price, icon, css_class in ingredient_defaults:
         existing = Ingredient.objects.filter(name=name).order_by('id')
 
         if existing.exists():
             ingredient = existing.first()
-
             duplicates = existing.exclude(id=ingredient.id)
             if duplicates.exists():
                 duplicates.delete()
@@ -95,7 +98,6 @@ def ensure_demo_data():
 
         if existing.exists():
             pizza = existing.first()
-
             duplicates = existing.exclude(id=pizza.id)
             if duplicates.exists():
                 duplicates.delete()
@@ -130,17 +132,102 @@ def ensure_demo_data():
 
         pizza.ingredients.set([ingredients[name] for name in payload['ingredient_names']])
 
-    demo_user, created = User.objects.get_or_create(
-        username='demo@pizzeria.com',
-        defaults={
+    demo_users = [
+        {
+            'username': 'demo@pizzeria.com',
             'email': 'demo@pizzeria.com',
             'first_name': 'DaDa',
             'last_name': 'Lover',
+            'password': 'pizza123',
+            'is_staff': False,
         },
+        {
+            'username': 'admin@pizzeria.com',
+            'email': 'admin@pizzeria.com',
+            'first_name': 'Admin',
+            'last_name': 'Chef',
+            'password': 'admin123',
+            'is_staff': True,
+        },
+        {
+            'username': 'customer@pizzeria.com',
+            'email': 'customer@pizzeria.com',
+            'first_name': 'Pizza',
+            'last_name': 'Fan',
+            'password': 'customer123',
+            'is_staff': False,
+        },
+    ]
+
+    for payload in demo_users:
+        user, created = User.objects.get_or_create(
+            username=payload['username'],
+            defaults={
+                'email': payload['email'],
+                'first_name': payload['first_name'],
+                'last_name': payload['last_name'],
+                'is_staff': payload['is_staff'],
+            },
+        )
+
+        changed_fields = []
+        for field in ['email', 'first_name', 'last_name', 'is_staff']:
+            if getattr(user, field) != payload[field]:
+                setattr(user, field, payload[field])
+                changed_fields.append(field)
+
+        if created or not user.check_password(payload['password']):
+            user.set_password(payload['password'])
+            changed_fields.append('password')
+
+        if changed_fields:
+            user.save()
+
+
+
+def build_auth_response(user: User) -> dict:
+    token, _ = Token.objects.get_or_create(user=user)
+    return {
+        'token': token.key,
+        'user': {
+            'id': user.id,
+            'fullName': user.get_full_name() or user.username,
+            'email': user.email or user.username,
+            'role': 'admin' if user.is_staff else 'customer',
+        },
+    }
+
+
+@api_view(['POST'])
+def register_view(request):
+    ensure_demo_data()
+    full_name = request.data.get('fullName', '').strip()
+    email = request.data.get('email', '').strip().lower()
+    password = request.data.get('password', '')
+
+    if not full_name:
+        return Response({'message': 'Full name is required.'}, status=status.HTTP_400_BAD_REQUEST)
+    if not email:
+        return Response({'message': 'Email is required.'}, status=status.HTTP_400_BAD_REQUEST)
+    if not password:
+        return Response({'message': 'Password is required.'}, status=status.HTTP_400_BAD_REQUEST)
+    if len(password) < 6:
+        return Response({'message': 'Password must be at least 6 characters long.'}, status=status.HTTP_400_BAD_REQUEST)
+    if User.objects.filter(username=email).exists():
+        return Response({'message': 'An account with this email already exists.'}, status=status.HTTP_400_BAD_REQUEST)
+
+    names = full_name.split(maxsplit=1)
+    first_name = names[0]
+    last_name = names[1] if len(names) > 1 else ''
+
+    user = User.objects.create_user(
+        username=email,
+        email=email,
+        password=password,
+        first_name=first_name,
+        last_name=last_name,
     )
-    if created or not demo_user.check_password('pizza123'):
-        demo_user.set_password('pizza123')
-        demo_user.save()
+    return Response(build_auth_response(user), status=status.HTTP_201_CREATED)
 
 
 @api_view(['POST'])
@@ -153,18 +240,7 @@ def login_view(request):
     if not user:
         return Response({'message': 'Invalid email or password.'}, status=status.HTTP_401_UNAUTHORIZED)
 
-    token, _ = Token.objects.get_or_create(user=user)
-    return Response(
-        {
-            'token': token.key,
-            'user': {
-                'id': user.id,
-                'fullName': user.get_full_name() or user.username,
-                'email': user.email or user.username,
-                'role': 'admin' if user.is_staff else 'customer',
-            },
-        }
-    )
+    return Response(build_auth_response(user))
 
 
 @api_view(['POST'])
@@ -277,6 +353,7 @@ def bank_account_view(request):
         }
     )
 
+
 @api_view(['POST'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([permissions.IsAuthenticated])
@@ -308,6 +385,7 @@ class OrderListCreateView(APIView):
 
 
 class OrderDetailView(APIView):
+    authentication_classes = [TokenAuthentication]
     permission_classes = [permissions.IsAuthenticated]
 
     def delete(self, request, pk):
@@ -317,5 +395,3 @@ class OrderDetailView(APIView):
             return Response(status=status.HTTP_204_NO_CONTENT)
         except Order.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
-
-

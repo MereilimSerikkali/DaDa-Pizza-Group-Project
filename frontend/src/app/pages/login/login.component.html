@@ -1,19 +1,43 @@
 <section class="container auth-shell">
   <div class="card auth-card">
     <div>
-      <span class="eyebrow">JWT demo login</span>
-      <h1>Sign in to order pizza</h1>
+      <span class="eyebrow">Real Django authentication</span>
+      <h1>{{ mode === 'login' ? 'Sign in to DaDa Pizza' : 'Create your DaDa Pizza account' }}</h1>
       <p>
-        The login request returns a fake JWT token. After that, the HTTP interceptor automatically appends the
-        Authorization header to cart and payment API calls.
+        {{ mode === 'login'
+          ? 'Login uses the backend token endpoint and stores the authenticated user in local storage.'
+          : 'Registration creates a new backend user and logs them in immediately.' }}
       </p>
+    </div>
+
+    <div class="auth-switcher">
+      <button class="btn" type="button" [class.btn-primary]="mode === 'login'" [class.btn-secondary]="mode !== 'login'" (click)="setMode('login')">
+        Login
+      </button>
+      <button class="btn" type="button" [class.btn-primary]="mode === 'register'" [class.btn-secondary]="mode !== 'register'" (click)="setMode('register')">
+        Register
+      </button>
     </div>
 
     @if (errorMessage) {
       <div class="message error">{{ errorMessage }}</div>
     }
 
-    <form class="auth-form" (ngSubmit)="login()">
+    <form class="auth-form" (ngSubmit)="submit()">
+      @if (mode === 'register') {
+        <div class="form-group">
+          <label for="fullName">Full name</label>
+          <input
+            id="fullName"
+            class="input"
+            type="text"
+            name="fullName"
+            [(ngModel)]="fullName"
+            required
+          />
+        </div>
+      }
+
       <div class="form-group">
         <label for="email">Email</label>
         <input
@@ -35,17 +59,25 @@
           name="password"
           [(ngModel)]="password"
           required
+          minlength="6"
         />
       </div>
 
       <button class="btn btn-primary" type="submit" [disabled]="loading">
-        {{ loading ? 'Signing in...' : 'Login' }}
+        {{ loading ? 'Please wait...' : (mode === 'login' ? 'Login' : 'Register') }}
       </button>
     </form>
 
     <div class="demo-note">
-      <strong>Demo account</strong>
-      <span>demo&#64;pizzeria.com / pizza123</span>
+      <strong>Pre-configured accounts</strong>
+      <div class="demo-accounts">
+        @for (account of demoAccounts; track account.email) {
+          <button class="demo-account-btn" type="button" (click)="useDemoAccount(account.email, account.password)">
+            <span>{{ account.label }}</span>
+            <small>{{ account.email }} / {{ account.password }}</small>
+          </button>
+        }
+      </div>
     </div>
   </div>
 </section>

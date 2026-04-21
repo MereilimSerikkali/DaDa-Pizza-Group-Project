@@ -18,11 +18,13 @@ export class AuthService {
 
   login(email: string, password: string): Observable<AuthResponse> {
     return this.api.post<AuthResponse>('/auth/login/', { email, password }).pipe(
-      tap((response) => {
-        localStorage.setItem(this.tokenKey, response.token);
-        localStorage.setItem(this.userKey, JSON.stringify(response.user));
-        this.userSubject.next(response.user);
-      })
+      tap((response) => this.storeSession(response))
+    );
+  }
+
+  register(fullName: string, email: string, password: string): Observable<AuthResponse> {
+    return this.api.post<AuthResponse>('/auth/register/', { fullName, email, password }).pipe(
+      tap((response) => this.storeSession(response))
     );
   }
 
@@ -47,6 +49,12 @@ export class AuthService {
   private readStoredUser(): User | null {
     const raw = localStorage.getItem(this.userKey);
     return raw ? (JSON.parse(raw) as User) : null;
+  }
+
+  private storeSession(response: AuthResponse): void {
+    localStorage.setItem(this.tokenKey, response.token);
+    localStorage.setItem(this.userKey, JSON.stringify(response.user));
+    this.userSubject.next(response.user);
   }
 
   private clearSession(): void {

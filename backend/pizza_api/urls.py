@@ -12,9 +12,11 @@ from .views import (
     logout_view,
     pizza_detail,
     pizza_list,
+    register_view,
 )
 
 urlpatterns = [
+    path('auth/register/', register_view),
     path('auth/login/', login_view),
     path('auth/logout/', logout_view),
     path('pizzas/', pizza_list),
