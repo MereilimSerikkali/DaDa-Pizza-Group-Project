@@ -1,46 +1,12 @@
-# Burgundy Pizzeria Front End (Angular)
+# DaDa Pizza
+Present By: Alpysbay Tomiris, Serikkali Mereilim, Kudaibergen Aisha
 
-This project is a front-end Angular demo for a pizzeria with a burgundy-and-white design system.
-It includes:
+DaDa Pizza is a full-stack web application for an online pizza ordering system. The project was developed using Angular for the front end and Django with Django REST Framework for the back end. The application allows users to register, log in, browse pizzas, add items to a cart, place orders, and manage their session securely. It also includes an admin panel in Django for managing pizzas, categories, ingredients, and customer orders.
 
-- Routing with 4 named routes: `/home`, `/login`, `/menu`, `/cart`
-- JWT login and logout flow
-- HTTP interceptor that adds `Authorization: Bearer <token>`
-- Fake backend interceptor so the app works without a real server
-- API services and TypeScript interfaces
-- Dynamic pizza customizer with ingredient preview on top of the pizza
-- Cart page with quantity updates, removal, refresh, and fake payment
-- Template-driven forms with `[(ngModel)]`
-- Conditional rendering and looping with Angular `@if` and `@for`
-- Graceful error messages for failed API requests
+On the front end, Angular was used to build a responsive single-page application with routing, reusable components, form handling, API integration, and authentication support. Services and interfaces were created to communicate with the back-end API, while HTTP interceptors were used to attach authentication tokens to protected requests. The interface includes multiple pages such as login/register, menu, cart, and home, with CSS styling for a user-friendly experience.
 
-## Demo credentials
+On the back end, Django and Django REST Framework were used to build a RESTful API. The system includes models such as pizzas, ingredients, categories, orders, and cart items, with serializers, function-based views, and class-based views to support CRUD operations and business logic. JWT authentication was implemented for secure login, logout, and token refresh. CORS was configured so the Angular front end could communicate with the Django server during development.
 
-- Email: `demo@pizzeria.com`
-- Password: `pizza123`
+For API testing and demonstration, Postman was used. A Postman collection was prepared with requests for registration, login, token refresh, logout, pizza retrieval, cart operations, payment simulation, and order creation. This makes it easier to test all endpoints and demonstrate that the API works correctly.
 
-## How to run
-
-```bash
-npm install
-npm start
-```
-
-Then open the local Angular development URL shown in the terminal.
-
-## Main API requests triggered by clicks
-
-1. **Login** → `POST /auth/login`
-2. **Load today's pizzas** → `GET /pizzas` and `GET /ingredients`
-3. **Add customized pizza to cart** → `POST /cart`
-4. **Refresh cart & bank** → `GET /cart` and `GET /bank/account`
-5. **+ / - quantity** → `PUT /cart/:id`
-6. **Remove item** → `DELETE /cart/:id`
-7. **Pay now** → `POST /bank/charge`, then `DELETE /cart`
-8. **Logout** → `POST /auth/logout`
-
-## Notes
-
-- The payment system is intentionally fake and safe for demo/coursework use.
-- The fake backend stores cart and bank data in `localStorage`.
-- The cart route is protected by an auth guard.
+In summary, DaDa Pizza is a complete Angular + Django + DRF + JWT + Postman project that demonstrates both front-end and back-end development, user authentication, API integration, and full-stack application design.
