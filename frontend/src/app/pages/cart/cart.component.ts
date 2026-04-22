@@ -1,9 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { forkJoin } from 'rxjs';
-import { BankAccount } from '../../core/interfaces/bank-account';
 import { CartItem } from '../../core/interfaces/cart-item';
-import { BankService } from '../../core/services/bank.service';
 import { CartService } from '../../core/services/cart.service';
+import { BankService } from '../../core/services/bank.service';
 
 @Component({
   selector: 'app-cart',
@@ -13,7 +11,6 @@ import { CartService } from '../../core/services/cart.service';
 export class CartComponent implements OnInit {
   showSuccessModal = false;
   cartItems: CartItem[] = [];
-  account: BankAccount | null = null;
   loading = false;
   paying = false;
   errorMessage = '';
@@ -41,13 +38,9 @@ export class CartComponent implements OnInit {
     this.loading = true;
     this.errorMessage = '';
 
-    forkJoin({
-      cart: this.cartService.getCart(),
-      account: this.bankService.getAccount()
-    }).subscribe({
-      next: ({ cart, account }) => {
+    this.cartService.getCart().subscribe({
+      next: (cart) => {
         this.cartItems = cart;
-        this.account = account;
         this.loading = false;
       },
       error: (error: Error) => {

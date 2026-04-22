@@ -3,8 +3,8 @@ from decimal import Decimal
 from django.contrib.auth import authenticate, get_user_model
 from django.db import transaction
 from rest_framework import permissions, status
-from rest_framework.authentication import TokenAuthentication
-from rest_framework.authtoken.models import Token
+from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -22,9 +22,10 @@ User = get_user_model()
 
 
 def _build_auth_response(user):
-    token, _ = Token.objects.get_or_create(user=user)
+    refresh = RefreshToken.for_user(user)
     return {
-        'token': token.key,
+        'access': str(refresh.access_token),
+        'refresh': str(refresh),
         'user': {
             'id': user.id,
             'fullName': user.get_full_name() or user.username,
@@ -75,10 +76,19 @@ def login_view(request):
 
 
 @api_view(['POST'])
-@authentication_classes([TokenAuthentication])
+@authentication_classes([JWTAuthentication])
 @permission_classes([permissions.IsAuthenticated])
 def logout_view(request):
-    Token.objects.filter(user=request.user).delete()
+    refresh_token = request.data.get('refresh')
+    if not refresh_token:
+        return Response({'message': 'Refresh token is required.'}, status=status.HTTP_400_BAD_REQUEST)
+
+    try:
+        token = RefreshToken(refresh_token)
+        token.blacklist()
+    except Exception:
+        return Response({'message': 'Invalid refresh token.'}, status=status.HTTP_400_BAD_REQUEST)
+
     return Response({'message': 'Logged out successfully.'})
 
 
@@ -111,7 +121,7 @@ def ingredient_list(request):
 
 
 class CartListCreateView(APIView):
-    authentication_classes = [TokenAuthentication]
+    authentication_classes = [JWTAuthentication]
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request):
@@ -145,7 +155,7 @@ class CartListCreateView(APIView):
 
 
 class CartDetailView(APIView):
-    authentication_classes = [TokenAuthentication]
+    authentication_classes = [JWTAuthentication]
     permission_classes = [permissions.IsAuthenticated]
 
     def get_object(self, request, pk):
@@ -172,21 +182,20 @@ class CartDetailView(APIView):
 
 
 @api_view(['GET'])
-@authentication_classes([TokenAuthentication])
+@authentication_classes([JWTAuthentication])
 @permission_classes([permissions.IsAuthenticated])
 def bank_account_view(request):
     return Response(
         {
             'holder': request.user.get_full_name() or 'DaDa Lover',
-            'balance': Decimal('250.00'),
-            'currency': 'USD',
             'last4': '4242',
+            'provider': 'Secure Card Payment',
         }
     )
 
 
 @api_view(['POST'])
-@authentication_classes([TokenAuthentication])
+@authentication_classes([JWTAuthentication])
 @permission_classes([permissions.IsAuthenticated])
 def bank_charge_view(request):
     amount = Decimal(str(request.data.get('amount', '0')))
@@ -197,13 +206,12 @@ def bank_charge_view(request):
         {
             'message': 'Payment successful.',
             'receiptId': f'RCPT-{request.user.id}-{CartItem.objects.filter(user=request.user).count()}',
-            'remainingBalance': Decimal('250.00') - amount,
         }
     )
 
 
 class OrderListCreateView(APIView):
-    authentication_classes = [TokenAuthentication]
+    authentication_classes = [JWTAuthentication]
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request):
@@ -216,7 +224,7 @@ class OrderListCreateView(APIView):
 
 
 class OrderDetailView(APIView):
-    authentication_classes = [TokenAuthentication]
+    authentication_classes = [JWTAuthentication]
     permission_classes = [permissions.IsAuthenticated]
 
     def delete(self, request, pk):

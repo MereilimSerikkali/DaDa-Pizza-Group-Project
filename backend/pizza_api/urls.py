@@ -1,4 +1,5 @@
 from django.urls import path
+from rest_framework_simplejwt.views import TokenRefreshView, TokenVerifyView
 
 from .views import (
     CartDetailView,
@@ -16,6 +17,8 @@ from .views import (
 )
 
 urlpatterns = [
+    path('auth/refresh/', TokenRefreshView.as_view()),
+    path('auth/verify/', TokenVerifyView.as_view()),
     path('auth/login/', login_view),
     path('auth/register/', register_view),
     path('auth/logout/', logout_view),

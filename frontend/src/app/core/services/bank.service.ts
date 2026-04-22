@@ -7,7 +7,6 @@ import { ApiService } from './api.service';
 export interface ChargeResponse {
   message: string;
   receiptId: string;
-  remainingBalance: number;
 }
 
 @Injectable({

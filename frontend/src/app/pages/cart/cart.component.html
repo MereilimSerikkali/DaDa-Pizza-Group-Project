@@ -3,11 +3,11 @@
     <div>
       <h1 class="section-title">Order Summary & Payment</h1>
       <p class="section-subtitle">
-        Quantity updates, item removal, bank balance refresh, and payment submission all go through API requests.
+        Quantity updates, item removal, and payment submission all go through API requests.
       </p>
     </div>
     <button class="btn btn-secondary" type="button" (click)="refreshData()">
-      {{ loading ? 'Refreshing...' : 'Refresh cart & bank' }}
+      {{ loading ? 'Refreshing...' : 'Refresh cart' }}
     </button>
   </div>
 
@@ -58,15 +58,6 @@
     </section>
 
     <section class="card checkout-panel">
-      <div class="account-box">
-        <h2>Bank account</h2>
-        @if (account) {
-          <p><strong>Holder:</strong> {{ account.holder }}</p>
-          <p><strong>Balance:</strong> ${{ account.balance.toFixed(2) }} {{ account.currency }}</p>
-          <p><strong>Card:</strong> **** **** **** {{ account.last4 }}</p>
-        }
-      </div>
-
       <div class="summary-box">
         <div>
           <span>Order total</span>

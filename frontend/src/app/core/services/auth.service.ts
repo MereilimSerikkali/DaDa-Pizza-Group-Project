@@ -8,7 +8,8 @@ import { ApiService } from './api.service';
   providedIn: 'root'
 })
 export class AuthService {
-  private readonly tokenKey = 'dada_token';
+  private readonly tokenKey = 'dada_access_token';
+  private readonly refreshTokenKey = 'dada_refresh_token';
   private readonly userKey = 'pizza_user';
   private readonly userSubject = new BehaviorSubject<User | null>(this.readStoredUser());
 
@@ -29,7 +30,17 @@ export class AuthService {
   }
 
   logout(): Observable<{ message: string }> {
-    return this.api.post<{ message: string }>('/auth/logout/', {}).pipe(
+    const refresh = this.getRefreshToken();
+
+    if (!refresh) {
+      this.clearSession();
+      return new Observable((subscriber) => {
+        subscriber.next({ message: 'Logged out locally.' });
+        subscriber.complete();
+      });
+    }
+
+    return this.api.post<{ message: string }>('/auth/logout/', { refresh }).pipe(
       tap(() => this.clearSession())
     );
   }
@@ -42,12 +53,17 @@ export class AuthService {
     return localStorage.getItem(this.tokenKey);
   }
 
+  getRefreshToken(): string | null {
+    return localStorage.getItem(this.refreshTokenKey);
+  }
+
   isAuthenticated(): boolean {
     return !!this.getToken();
   }
 
   private persistSession(response: AuthResponse): void {
-    localStorage.setItem(this.tokenKey, response.token);
+    localStorage.setItem(this.tokenKey, response.access);
+    localStorage.setItem(this.refreshTokenKey, response.refresh);
     localStorage.setItem(this.userKey, JSON.stringify(response.user));
     this.userSubject.next(response.user);
   }
@@ -59,6 +75,7 @@ export class AuthService {
 
   private clearSession(): void {
     localStorage.removeItem(this.tokenKey);
+    localStorage.removeItem(this.refreshTokenKey);
     localStorage.removeItem(this.userKey);
     this.userSubject.next(null);
   }
